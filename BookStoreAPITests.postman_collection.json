@@ -1,0 +1,228 @@
+{
+	"info": {
+		"_postman_id": "d9f7529c-126e-495c-a8f3-7821b48355d7",
+		"name": "BookStoreAPITests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1653210"
+	},
+	"item": [
+		{
+			"name": "AddBook",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check status code\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"// Check if response has book ID\r",
+							"pm.test(\"Response has book ID\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"id\");\r",
+							"    // Store book ID for the next request\r",
+							"    pm.environment.set(\"bookId\", jsonData.id);\r",
+							"});\r",
+							"\r",
+							"// Store request data for comparison\r",
+							"var requestData = pm.request.body.raw;\r",
+							"pm.environment.set(\"requestData\", requestData);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Test Book\",\r\n  \"author\": \"Author Name\",\r\n  \"publishedDate\": \"2024-01-01\",\r\n  \"isbn\": \"1234567890123\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/books",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetBookById",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check status code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Compare response data with the original request data\r",
+							"pm.test(\"Response matches the original request data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    var requestData = JSON.parse(pm.environment.get(\"requestData\"));\r",
+							"\r",
+							"    pm.expect(jsonData.title).to.eql(requestData.title);\r",
+							"    pm.expect(jsonData.author).to.eql(requestData.author);\r",
+							"    pm.expect(jsonData.publishedDate).to.eql(requestData.publishedDate);\r",
+							"    pm.expect(jsonData.isbn).to.eql(requestData.isbn);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/books/{{bookId}}",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"books",
+						"{{bookId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateBookById",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check status code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Store the update request data for comparison\r",
+							"var updateData = pm.request.body.raw;\r",
+							"pm.environment.set(\"updateData\", updateData);\r",
+							"\r",
+							"// Compare response data with the update request data\r",
+							"var jsonData = pm.response.json();\r",
+							"var updateData = JSON.parse(pm.environment.get(\"updateData\"));\r",
+							"\r",
+							"pm.test(\"Response matches the update request data\", function () {\r",
+							"   updateData.title && pm.expect(jsonData.title).to.eql(updateData.title);\r",
+							"   updateData.author && pm.expect(jsonData.author).to.eql(updateData.author);\r",
+							"   updateData.publishedDate && pm.expect(jsonData.publishedDate).to.eql(updateData.publishedDate);\r",
+							"   updateData.isbn && pm.expect(jsonData.isbn).to.eql(updateData.isbn);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Updated Book Title\",\r\n  \"author\": \"Updated Author Name\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/books/{{bookId}}",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"books",
+						"{{bookId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteBookById",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check status code\r",
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/books/{{bookId}}",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"books",
+						"{{bookId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetBookById_verifyDelete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Book is deleted\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/books/{{bookId}}",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"books",
+						"{{bookId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
